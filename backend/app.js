@@ -11,7 +11,7 @@ const userRoutes = require('./routes/user');
 
 const app = express();
 
-mongoose.connect('mongodb+srv://dimitridechamp:F7FSoeailRM9nFUJ@cluster0.bjjzzbv.mongodb.net/gsb-visites?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://dimitridechamp:n3mkibuHz86YN2Dv@cluster0.bjjzzbv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
@@ -25,6 +25,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(helmet());
+app.set('trust proxy', 1);
 app.use('/api/stuff', stuffRoutes);
 app.use('/api/motif', motifRoutes);
 app.use('/api/praticien', praticienRoutes);

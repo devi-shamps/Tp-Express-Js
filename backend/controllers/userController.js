@@ -42,7 +42,11 @@ exports.signup = [
         });
 
         await visiteur.save();
-        res.status(201).json({ message: 'visiteur créé !' });
+        res.status(201).json({ 
+            message: 'visiteur créé !', 
+            lastVisiteurId: visiteur._id, 
+            lastVisiteurEmail: req.body.email, 
+            lastVisiteurPassword: req.body.password });
     })
 ];
 
@@ -65,6 +69,6 @@ exports.login = asyncHandler(async (req, res, next) => {
             { userId: visiteur._id },
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
-        )
+        ),
     });
 });
