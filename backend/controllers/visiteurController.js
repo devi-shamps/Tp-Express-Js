@@ -1,9 +1,12 @@
 const Visiteur = require('../models/visiteur');
+const Praticien = require('../models/praticien');
+ 
 const expressAsyncHandler = require('express-async-handler');
 const { body , validationResult } = require('express-validator');
+const visiteur = require('../models/visiteur');
 
 exports.getOneVisiteur = expressAsyncHandler(async (req, res) => {
-  const visiteur = await Visiteur.findOne({ _id: req.params.id });
+  const visiteur = await Visiteur.findOne({ _id: req.params.id }).populate('visites').populate('portefeuillePraticiens');
   if (!visiteur) {
     res.status(404).json({ message: 'Visiteur non trouvé' });
     return;
@@ -59,4 +62,30 @@ exports.createVisiteur = expressAsyncHandler(async (req, res) => {
   await visiteur.save();
   res.status(201).json({ message: 'Visiteur enregistré avec succès !', visiteur_id: visiteur._id });
 });
+
 // ...
+
+exports.addPraticien = expressAsyncHandler(async (req, res, next) => {
+  const { visiteur_id, praticien_id } = req.params;
+
+  try {
+    const visiteur = await Visiteur.findOne({ _id: visiteur_id });
+    if (!visiteur) {
+      res.status(404).json({ message: 'Visiteur non trouvé' });
+      return;
+    }
+
+    const estDejaPresent = visiteur.portefeuillePraticiens.includes(praticien_id);
+    if (estDejaPresent) {
+      res.status(400).json({ message: 'Ce praticien est déjà dans le portefeuille du visiteur' });
+      return;
+    }
+
+    await Visiteur.updateOne({ _id: visiteur_id }, { $push: { portefeuillePraticiens: praticien_id } });
+    res.status(201).json({ message: 'Praticien ajouté avec succès !' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+

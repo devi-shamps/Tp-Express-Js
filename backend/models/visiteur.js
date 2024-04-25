@@ -9,12 +9,13 @@ const visiteurSchema = mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   date_embauche: { type: Date, required: true },
-  visites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Visite' }]  
+  visites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Visite' }],
+  portefeuillePraticiens: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Praticien', required: true}]
 });
 
 visiteurSchema.plugin(encrypt, {
   secret: 'F7FSoeailRM9nFUJ', 
-  encryptedFields: ['nom', 'prenom', 'tel', 'date_embauche', 'visites'] 
+  encryptedFields: ['nom', 'prenom', 'tel', 'date_embauche', 'visites', 'portefeuillePraticiens'] 
 });
 
 module.exports = mongoose.model('Visiteur', visiteurSchema);
